@@ -70,7 +70,7 @@ Mat getRotationMat(double _angle) {
 	//---Input values at each position, based on the input angle
 	//---1. row---
 	rotationMat.at<double>(0, 0) = cosA;
-	rotationMat.at<double>(0, 1) = (sinA)*(-1);
+	rotationMat.at<double>(0, 1) = (sinA)*-1;
 	rotationMat.at<double>(0, 2) = 0;
 	//---2. row---
 	rotationMat.at<double>(1, 0) = sinA;
@@ -93,9 +93,14 @@ Mat getTransformMat(double rX, double rY, double a, double b, double _angle) {
 
 	//---Setup and call respective matrices for later multiplication---
 	Mat translationMat = getTranslationMat(rX, rY);
+	cout << "TranslationMat = " << endl << translationMat << endl << endl;
+
 	Mat translationMat2 = getTranslationMat(-(rX + a), -(rY + b));
+	cout << "TranslationMat = " << endl << translationMat2 << endl << endl;
+
 	Mat rotationMat = getRotationMat(_angle);
-	
+	cout << "RotationMat = " << endl << rotationMat << endl << endl;
+
 	//multiply translationMat and rotationMat
 	for (int i = 0; i < translationMat.rows; i++) {
 		for (int j = 0; j < rotationMat.cols; j++) {
@@ -106,7 +111,7 @@ Mat getTransformMat(double rX, double rY, double a, double b, double _angle) {
 			tempMat.at<double>(i, j) = sum;
 		}
 	}
-
+	
 	//multiply tempMat(translationMat*rotationMat) and translationMat2
 	for (int i = 0; i < translationMat2.rows; i++) {
 		for (int j = 0; j < tempMat.cols; j++) {
@@ -118,7 +123,7 @@ Mat getTransformMat(double rX, double rY, double a, double b, double _angle) {
 		}
 	}
 
-
+	cout << endl << endl << "transformMat = " << endl << transformMat;
 	return transformMat;
 }
 
@@ -147,22 +152,22 @@ int main(int, char** argv) {
 	Mat outImage = Mat(nWidth, nHeight, image.type());
 	//-----------------------------------------
 	
-	cout << "Strange cols: " <<(outImage.cols - image.cols) / 2 << endl;
-	cout << "Strange rows: " << (outImage.rows - image.rows) / 2 << endl;
+	cout << "Mat diff. width: " <<(outImage.cols - image.cols) / 2 << endl;
+	cout << "Mat diff. height: " << (outImage.rows - image.rows) / 2 << endl;
 
 
 	//---4---Get a transformed rotation matrix. This both processes the angle (???and the offset for point of rotation???)-------
 	Mat rotation = getTransformMat(
-		1000, // de her gør ikke en skid
-		1000, // de her gør ikke en skid
-		0,
-		outImage.cols/2,
-		//(outImage.cols - image.cols) / 2.,
-		//(outImage.rows - image.rows) / 2.,
+		image.cols/2, // de her gør ikke en skid
+		image.rows/2, // de her gør ikke en skid
+		250,
+		250,
+		//(outImage.cols - image.cols),
+		//(outImage.rows - image.rows),
 		angle
 	);
 	//Prints out the transformed rotation matrix for good measure
-	cout << rotation;
+	//cout << rotation;
 	//--------------------------------------------------------------------------------------------------------------------
 
 
